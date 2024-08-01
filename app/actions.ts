@@ -3,6 +3,7 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { z } from "zod";
 import prisma from "./lib/db";
 import { CategoryTypes } from "@prisma/client";
+import { staticGenerationAsyncStorage } from "next/dist/client/components/static-generation-async-storage-instance";
 
 export type State = {
   status: "error" | "success" | undefined;
@@ -26,6 +27,19 @@ const productSchema = z.object({
   productFile: z
     .string()
     .min(1, { message: "Please upload a zip of your product." }),
+});
+
+const userSettingsSchema = z.object({
+  firstName: z
+    .string()
+    .min(3, { message: "Minimum length of 3 required." })
+    .or(z.literal(""))
+    .optional(),
+  lastName: z
+    .string()
+    .min(3, { message: "Minimum length of 3 required." })
+    .or(z.literal(""))
+    .optional(),
 });
 
 export async function SellProduct(prevState: any, formData: FormData) {
@@ -71,6 +85,47 @@ export async function SellProduct(prevState: any, formData: FormData) {
   const state: State = {
     status: "success",
     message: "Product created successfully",
+  };
+
+  return state;
+}
+
+export async function updateUserSettings(prevState: any, formData: FormData) {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+
+  if (!user) {
+    throw new Error("Something went wrong");
+  }
+
+  const validateFields = userSettingsSchema.safeParse({
+    firstName: formData.get("firstName"),
+    lastName: formData.get("lastName"),
+  });
+
+  if (!validateFields.success) {
+    const state: State = {
+      status: "error",
+      errors: validateFields.error.flatten().fieldErrors,
+      message: "Oops, I think there is a mistake with your inputs...",
+    };
+
+    return state;
+  }
+
+  const data = await prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      firstName: validateFields.data.firstName,
+      lastName: validateFields.data.lastName,
+    },
+  });
+
+  const state: State = {
+    status: "success",
+    message: "Your settings have been updated.",
   };
 
   return state;
