@@ -9,9 +9,33 @@ datasource db {
 }
 
 model User {
-  id           String @id @unique
+  id           String    @id @unique
   email        String
   firstName    String
   lastName     String
   profileImage String
+  products     Product[]
 }
+
+model Product {
+  id               String        @id @default(uuid())
+  name             String
+  price            Int
+  smallDescription String
+  description      Json
+  images           String[]
+  productFile      String
+  category         CategoryTypes
+  createdAt        DateTime      @default(now())
+  seller           User          @relation(fields: [sellerId], references: [id])
+  sellerId         String
+}
+
+enum CategoryTypes {
+  template
+  uiKit
+  icon
+}
+
+// One-to-Many Relations
+// One User can have many Products; One Product will belong to only to One User
