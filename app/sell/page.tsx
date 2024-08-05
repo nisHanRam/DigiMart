@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import React, { useEffect, useState } from "react";
-import SelectCategory from "./SelectCategory";
+import SelectCategory from "../components/SelectCategory";
 import { Textarea } from "@/components/ui/textarea";
 import TipTapEditor from "../components/Editor";
 import { UploadDropzone } from "../lib/uploadthing";
@@ -18,7 +18,7 @@ import { JSONContent } from "@tiptap/react";
 import { useFormState } from "react-dom";
 import { SellProduct, State } from "../actions";
 import { toast } from "sonner";
-import SubmitButton from "./SubmitButton";
+import SubmitButton from "../components/SubmitButton";
 import { redirect } from "next/navigation";
 
 const SellRoute = () => {
