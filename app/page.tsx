@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Navbar from "./components/Navbar";
 import NewestProducts from "./components/NewestProducts";
+import ProductRow from "./components/ProductRow";
 
 export default function Home() {
   return (
@@ -15,7 +16,10 @@ export default function Home() {
           placeat iste debitis?
         </p>
       </div>
-      <NewestProducts />
+      <ProductRow category="newest" />
+      <ProductRow category="templates" />
+      <ProductRow category="uiKits" />
+      <ProductRow category="icons" />
     </section>
   );
 }
